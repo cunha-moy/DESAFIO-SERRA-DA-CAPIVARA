@@ -1,0 +1,852 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio Capivara</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --green: #176b48;
+  --dark: #153b2c;
+  --yellow: #ffd166;
+  --cream: #fff9eb;
+  --orange: #f28c45;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Nunito', sans-serif;
+  color: var(--dark);
+  background:
+    radial-gradient(circle at top left, #ffe4a8, transparent 35%),
+    linear-gradient(135deg, #f8f0d9, #e5f1dc);
+}
+
+button, input {
+  font: inherit;
+}
+
+.container {
+  width: min(950px, 92%);
+  margin: 0 auto;
+  padding: 28px 0 45px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.logo {
+  font-size: 54px;
+  margin-bottom: 0;
+}
+
+h1 {
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
+  margin: 0;
+  color: var(--green);
+  font-weight: 900;
+}
+
+.subtitle {
+  margin: 5px 0;
+  font-weight: 700;
+  color: #53745e;
+}
+
+.panel {
+  background: rgba(255,255,255,.92);
+  border: 2px solid rgba(23,107,72,.12);
+  border-radius: 25px;
+  padding: 25px;
+  box-shadow: 0 12px 30px rgba(34,75,49,.10);
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.setup-grid, .score-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.team-input {
+  padding: 16px;
+  border-radius: 16px;
+  background: #f0f7ed;
+}
+
+.team-input label {
+  display: block;
+  font-weight: 900;
+  margin-bottom: 7px;
+}
+
+input {
+  width: 100%;
+  border: 2px solid #d4e5d4;
+  border-radius: 12px;
+  padding: 12px;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--green);
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+  border-radius: 14px;
+  padding: 13px 20px;
+  font-weight: 900;
+  transition: .2s;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+
+.primary {
+  background: var(--green);
+  color: white;
+}
+
+.secondary {
+  background: #e9f2e6;
+  color: var(--green);
+}
+
+.start-button {
+  width: 100%;
+  margin-top: 18px;
+  font-size: 1.1rem;
+  padding: 16px;
+}
+
+.score-card {
+  padding: 18px;
+  border-radius: 18px;
+  background: #f0f7ed;
+  text-align: center;
+  border: 2px solid transparent;
+}
+
+.score-card.active {
+  border-color: var(--orange);
+  background: #fff5df;
+}
+
+.score-name {
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+.score {
+  font-size: 2.3rem;
+  font-weight: 900;
+  color: var(--green);
+}
+
+.score-label {
+  font-size: .8rem;
+  color: #6a806d;
+  font-weight: 800;
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.pill {
+  background: #edf5e9;
+  padding: 8px 13px;
+  border-radius: 50px;
+  font-weight: 900;
+  font-size: .85rem;
+}
+
+.level-easy {
+  background: #dff4df;
+  color: #24743e;
+}
+
+.level-medium {
+  background: #fff0c8;
+  color: #986500;
+}
+
+.level-hard {
+  background: #ffe0d8;
+  color: #a83d29;
+}
+
+.progress {
+  height: 12px;
+  background: #e6eddf;
+  border-radius: 30px;
+  overflow: hidden;
+  margin: 16px 0 22px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #25885c, #a2c95b);
+  width: 0%;
+  transition: width .3s;
+}
+
+.question-number {
+  color: #6c806d;
+  font-weight: 900;
+  font-size: .9rem;
+}
+
+.question {
+  font-size: clamp(1.3rem, 4vw, 1.8rem);
+  font-weight: 900;
+  line-height: 1.3;
+  margin: 12px 0 22px;
+}
+
+.options {
+  display: grid;
+  gap: 12px;
+}
+
+.option {
+  text-align: left;
+  width: 100%;
+  background: #f2f6ed;
+  color: var(--dark);
+  border: 2px solid #e0e9da;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.option.correct {
+  background: #d8f4df;
+  border-color: #3c9a5c;
+}
+
+.option.wrong {
+  background: #ffe1dc;
+  border-color: #dc705e;
+}
+
+.feedback {
+  padding: 16px;
+  border-radius: 15px;
+  margin-top: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+  display: none;
+}
+
+.feedback.show {
+  display: block;
+}
+
+.feedback.good {
+  background: #e1f5e5;
+  color: #21663b;
+}
+
+.feedback.bad {
+  background: #fff0e9;
+  color: #9b4835;
+}
+
+.next-button {
+  width: 100%;
+  margin-top: 18px;
+  display: none;
+  font-size: 1rem;
+}
+
+.next-button.show {
+  display: block;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.turn-message {
+  text-align: center;
+  font-weight: 900;
+  color: #a45b23;
+  margin: 0 0 15px;
+}
+
+.rules {
+  font-size: .95rem;
+  line-height: 1.7;
+  color: #526b57;
+}
+
+.result {
+  text-align: center;
+}
+
+.result-emoji {
+  font-size: 70px;
+}
+
+.result h2 {
+  font-size: 2rem;
+  color: var(--green);
+}
+
+.final-scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.final-score {
+  padding: 20px;
+  background: #f0f7ed;
+  border-radius: 16px;
+}
+
+footer {
+  text-align: center;
+  color: #71816d;
+  font-size: .85rem;
+  margin-top: 20px;
+}
+
+@media(max-width: 600px) {
+  .setup-grid, .score-grid, .final-scores {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 18px;
+  }
+
+  .logo {
+    font-size: 42px;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">🦫🌿</div>
+  <h1>DESAFIO CAPIVARA</h1>
+  <p class="subtitle">Conhecimento, natureza e competição!</p>
+</header>
+
+<section id="setup" class="panel">
+  <h2>🎮 Preparem suas equipes!</h2>
+  <p>O jogo será disputado por duas duplas. Escolham os nomes das equipes para começar.</p>
+
+  <div class="setup-grid">
+    <div class="team-input">
+      <label for="team1">🟢 Nome da dupla 1</label>
+      <input id="team1" value="Dupla Verde" maxlength="25">
+    </div>
+
+    <div class="team-input">
+      <label for="team2">🟠 Nome da dupla 2</label>
+      <input id="team2" value="Dupla Laranja" maxlength="25">
+    </div>
+  </div>
+
+  <div class="rules">
+    <h3>📜 Como funciona?</h3>
+    <p>• As duplas jogam alternadamente.</p>
+    <p>• Cada resposta correta vale 10 pontos.</p>
+    <p>• Respostas erradas não pontuam.</p>
+    <p>• O jogo possui 10 perguntas fáceis, 10 médias e 6 difíceis.</p>
+    <p>• A dupla com mais pontos vence!</p>
+  </div>
+
+  <button class="primary start-button" onclick="startGame()">COMEÇAR O DESAFIO 🚀</button>
+</section>
+
+<section id="game" class="hidden">
+
+  <div class="panel">
+    <div class="score-grid">
+      <div class="score-card" id="card0">
+        <div class="score-name" id="name0">Dupla Verde</div>
+        <div class="score" id="score0">0</div>
+        <div class="score-label">PONTOS</div>
+      </div>
+
+      <div class="score-card" id="card1">
+        <div class="score-name" id="name1">Dupla Laranja</div>
+        <div class="score" id="score1">0</div>
+        <div class="score-label">PONTOS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="turn-message" id="turnMessage"></p>
+
+    <div class="game-info">
+      <span class="pill" id="questionCounter">Pergunta 1 de 26</span>
+      <span class="pill" id="levelBadge">FÁCIL</span>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="question-number" id="questionNumber">QUESTÃO 01</div>
+    <div class="question" id="questionText"></div>
+
+    <div class="options" id="options"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <button class="primary next-button" id="nextButton" onclick="nextQuestion()">
+      PRÓXIMA PERGUNTA →
+    </button>
+  </div>
+
+</section>
+
+<section id="finish" class="panel result hidden">
+  <div class="result-emoji" id="resultEmoji">🏆</div>
+  <h2 id="resultTitle">Temos um vencedor!</h2>
+  <p id="resultText"></p>
+
+  <div class="final-scores">
+    <div class="final-score">
+      <strong id="finalName0"></strong>
+      <div class="score" id="finalScore0">0</div>
+    </div>
+    <div class="final-score">
+      <strong id="finalName1"></strong>
+      <div class="score" id="finalScore1">0</div>
+    </div>
+  </div>
+
+  <button class="primary start-button" onclick="restartGame()">JOGAR NOVAMENTE 🔄</button>
+</section>
+
+<footer>
+  Desafio Capivara • Aprender também pode ser uma aventura! 🌱
+</footer>
+
+</div>
+
+<script>
+const questions = [
+  // 10 FÁCEIS
+  {
+    level: "Fácil",
+    question: "Qual é o nome do processo de formação de rochas a partir do acúmulo de sedimentos?",
+    options: ["Vulcanismo", "Sedimentação", "Metamorfismo", "Fotossíntese"],
+    answer: 1,
+    explanation: "A sedimentação envolve o depósito e o acúmulo de partículas que podem formar rochas sedimentares."
+  },
+  {
+    level: "Fácil",
+    question: "O que é um fóssil?",
+    options: ["Uma rocha derretida", "Um resto ou vestígio de ser vivo preservado", "Um tipo de mineral líquido", "Uma planta atual"],
+    answer: 1,
+    explanation: "Fósseis são restos ou vestígios de organismos antigos preservados em rochas ou outros materiais."
+  },
+  {
+    level: "Fácil",
+    question: "Qual processo desgasta e transporta materiais da superfície terrestre?",
+    options: ["Erosão", "Fotossíntese", "Respiração", "Germinação"],
+    answer: 0,
+    explanation: "A erosão remove e transporta partículas de solo e rochas pela ação da água, do vento e de outros agentes."
+  },
+  {
+    level: "Fácil",
+    question: "As pinturas rupestres são exemplos de quê?",
+    options: ["Escrita moderna", "Arte e registros humanos pré-históricos", "Fósseis de animais", "Formações vulcânicas"],
+    answer: 1,
+    explanation: "As pinturas rupestres são registros feitos por grupos humanos antigos em paredes de cavernas e abrigos rochosos."
+  },
+  {
+    level: "Fácil",
+    question: "Qual destes materiais é um exemplo de rocha sedimentar?",
+    options: ["Granito", "Basalto", "Arenito", "Obsidiana"],
+    answer: 2,
+    explanation: "O arenito é uma rocha sedimentar formada principalmente pela compactação e cimentação de grãos de areia."
+  },
+  {
+    level: "Fácil",
+    question: "Qual é o principal agente responsável pela formação de cavernas em rochas calcárias?",
+    options: ["Ação da água", "Luz solar", "Vento quente", "Eletricidade"],
+    answer: 0,
+    explanation: "A água levemente ácida dissolve lentamente o calcário, podendo formar cavernas."
+  },
+  {
+    level: "Fácil",
+    question: "Em qual estado brasileiro está localizado o Parque Nacional da Serra da Capivara?",
+    options: ["Bahia", "Piauí", "Goiás", "Minas Gerais"],
+    answer: 1,
+    explanation: "O Parque Nacional da Serra da Capivara fica no sudeste do estado do Piauí."
+  },
+  {
+    level: "Fácil",
+    question: "Qual profissional estuda os fósseis?",
+    options: ["Astrônomo", "Paleontólogo", "Meteorologista", "Oceanógrafo"],
+    answer: 1,
+    explanation: "O paleontólogo estuda os organismos do passado por meio de seus fósseis."
+  },
+  {
+    level: "Fácil",
+    question: "O que é uma rocha ígnea?",
+    options: ["Rocha formada pelo resfriamento do magma ou da lava", "Rocha formada por folhas", "Rocha feita de areia apenas", "Rocha formada por gelo"],
+    answer: 0,
+    explanation: "Rochas ígneas se formam quando o magma ou a lava esfria e solidifica."
+  },
+  {
+    level: "Fácil",
+    question: "O que podemos encontrar em sítios arqueológicos?",
+    options: ["Somente animais vivos", "Vestígios de atividades humanas do passado", "Apenas rochas vulcânicas", "Somente plantas atuais"],
+    answer: 1,
+    explanation: "Sítios arqueológicos guardam vestígios da presença e das atividades humanas, como ferramentas, pinturas e estruturas."
+  },
+
+  // 10 MÉDIAS
+  {
+    level: "Média",
+    question: "Como é chamado o processo de alteração e decomposição das rochas no próprio local?",
+    options: ["Intemperismo", "Fossilização", "Cristalização", "Sedimentação"],
+    answer: 0,
+    explanation: "O intemperismo altera e fragmenta as rochas por processos físicos, químicos e biológicos."
+  },
+  {
+    level: "Média",
+    question: "Qual é a principal diferença entre rochas magmáticas intrusivas e extrusivas?",
+    options: ["A cor", "O local e a velocidade de resfriamento", "A idade dos fósseis", "A quantidade de água"],
+    answer: 1,
+    explanation: "As intrusivas esfriam lentamente no interior da Terra; as extrusivas esfriam mais rapidamente na superfície."
+  },
+  {
+    level: "Média",
+    question: "Qual condição costuma favorecer a fossilização de um organismo?",
+    options: ["Decomposição rápida", "Soterramento relativamente rápido por sedimentos", "Exposição prolongada ao sol", "Contato constante com predadores"],
+    answer: 1,
+    explanation: "O soterramento pode proteger os restos do organismo da ação de decompositores e de outros agentes."
+  },
+  {
+    level: "Média",
+    question: "O que acontece durante o metamorfismo das rochas?",
+    options: ["Elas viram seres vivos", "Sofrem transformações por pressão, temperatura e fluidos", "São transformadas em água", "Desaparecem completamente"],
+    answer: 1,
+    explanation: "O metamorfismo modifica minerais e texturas das rochas sem que elas necessariamente derretam."
+  },
+  {
+    level: "Média",
+    question: "O que a estratigrafia estuda?",
+    options: ["Camadas de rochas e sua organização", "A circulação dos oceanos", "O comportamento dos mamíferos atuais", "A formação das nuvens"],
+    answer: 0,
+    explanation: "A estratigrafia estuda as camadas rochosas, sua distribuição, composição e relações no tempo."
+  },
+  {
+    level: "Média",
+    question: "Qual é a importância dos fósseis para a ciência?",
+    options: ["Permitem conhecer organismos e ambientes do passado", "Mostram apenas a temperatura atual", "Substituem todos os estudos geológicos", "Comprovam a existência de vida em outros planetas"],
+    answer: 0,
+    explanation: "Os fósseis ajudam a reconstruir a história da vida, a evolução dos organismos e os ambientes antigos."
+  },
+  {
+    level: "Média",
+    question: "A datação relativa de camadas rochosas permite descobrir principalmente:",
+    options: ["A idade exata em anos", "A ordem em que os eventos aconteceram", "A temperatura do magma", "A composição do núcleo terrestre"],
+    answer: 1,
+    explanation: "A datação relativa organiza eventos e camadas em uma sequência, sem necessariamente indicar uma idade numérica."
+  },
+  {
+    level: "Média",
+    question: "Qual é o nome dado ao estudo dos vestígios materiais das sociedades humanas antigas?",
+    options: ["Arqueologia", "Botânica", "Genética", "Astronomia"],
+    answer: 0,
+    explanation: "A arqueologia investiga sociedades humanas por meio de vestígios materiais deixados no passado."
+  },
+  {
+    level: "Média",
+    question: "Por que a Serra da Capivara é tão importante para o patrimônio brasileiro?",
+    options: ["Por suas praias", "Por seus sítios arqueológicos e registros de ocupação humana", "Por suas geleiras", "Por suas grandes cidades industriais"],
+    answer: 1,
+    explanation: "A região reúne numerosos sítios arqueológicos, pinturas rupestres e evidências importantes para pesquisas sobre a presença humana."
+  },
+  {
+    level: "Média",
+    question: "Qual alternativa apresenta um agente que pode transportar sedimentos?",
+    options: ["Água corrente", "Somente a luz", "Somente o magnetismo", "A sombra das árvores"],
+    answer: 0,
+    explanation: "Rios, enxurradas, vento e geleiras podem transportar sedimentos de um lugar para outro."
+  },
+
+  // 6 DIFÍCEIS
+  {
+    level: "Difícil",
+    question: "Qual princípio geológico afirma que, em uma sequência de rochas sedimentares não deformada, as camadas inferiores são geralmente mais antigas?",
+    options: ["Princípio da superposição", "Princípio da seleção natural", "Lei da gravidade", "Princípio da fotossíntese"],
+    answer: 0,
+    explanation: "O princípio da superposição indica que, em uma sequência não deformada, as camadas mais antigas ficam abaixo das mais recentes."
+  },
+  {
+    level: "Difícil",
+    question: "O que é um fóssil-guia?",
+    options: ["Um fóssil usado para indicar a idade relativa de camadas", "Um fóssil que aponta direções", "Um fóssil de qualquer organismo atual", "Uma rocha sem minerais"],
+    answer: 0,
+    explanation: "Fósseis-guia pertencem a organismos que tiveram ampla distribuição geográfica e existência relativamente curta no tempo geológico."
+  },
+  {
+    level: "Difícil",
+    question: "Qual processo pode preservar a estrutura original de partes duras de um organismo por substituição mineral?",
+    options: ["Permineralização ou substituição mineral", "Evaporação atmosférica", "Fotossíntese", "Combustão"],
+    answer: 0,
+    explanation: "Minerais podem preencher poros ou substituir componentes originais, contribuindo para a preservação dos restos."
+  },
+  {
+    level: "Difícil",
+    question: "Qual é a diferença entre datação absoluta e datação relativa?",
+    options: ["A absoluta estima uma idade numérica; a relativa estabelece uma sequência temporal", "As duas sempre fornecem a mesma informação", "A relativa usa somente DNA", "A absoluta não utiliza métodos científicos"],
+    answer: 0,
+    explanation: "A datação absoluta fornece estimativas numéricas de idade, enquanto a relativa indica se algo é anterior ou posterior a outro evento."
+  },
+  {
+    level: "Difícil",
+    question: "Em datação radiométrica, o que é utilizado para estimar a idade de determinadas rochas?",
+    options: ["A proporção entre isótopos radioativos e produtos de decaimento", "A cor da superfície", "O tamanho dos cristais apenas", "A quantidade de chuva atual"],
+    answer: 0,
+    explanation: "A datação radiométrica utiliza o decaimento de isótopos radioativos e suas taxas conhecidas para estimar idades."
+  },
+  {
+    level: "Difícil",
+    question: "Por que é importante analisar o contexto arqueológico de uma pintura rupestre?",
+    options: ["Para entender sua relação com o ambiente e outros vestígios", "Para descobrir automaticamente o nome do autor", "Para garantir que todas tenham a mesma idade", "Para transformar a pintura em fóssil"],
+    answer: 0,
+    explanation: "O contexto arqueológico ajuda a interpretar os registros, considerando sua localização, associações e possíveis relações com atividades humanas."
+  }
+];
+
+let teams = ["Dupla Verde", "Dupla Laranja"];
+let scores = [0, 0];
+let currentTeam = 0;
+let currentQuestion = 0;
+let answered = false;
+let gameQuestions = [];
+
+function startGame() {
+  const first = document.getElementById("team1").value.trim();
+  const second = document.getElementById("team2").value.trim();
+
+  teams = [
+    first || "Dupla Verde",
+    second || "Dupla Laranja"
+  ];
+
+  scores = [0, 0];
+  currentTeam = 0;
+  currentQuestion = 0;
+  answered = false;
+
+  gameQuestions = [...questions];
+
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("finish").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  updateScores();
+  showQuestion();
+}
+
+function updateScores() {
+  document.getElementById("name0").textContent = teams[0];
+  document.getElementById("name1").textContent = teams[1];
+
+  document.getElementById("score0").textContent = scores[0];
+  document.getElementById("score1").textContent = scores[1];
+
+  document.getElementById("card0").classList.toggle("active", currentTeam === 0);
+  document.getElementById("card1").classList.toggle("active", currentTeam === 1);
+}
+
+function showQuestion() {
+  answered = false;
+
+  const q = gameQuestions[currentQuestion];
+
+  document.getElementById("turnMessage").textContent =
+    "🎯 Vez de jogar: " + teams[currentTeam];
+
+  document.getElementById("questionCounter").textContent =
+    "Pergunta " + (currentQuestion + 1) + " de " + gameQuestions.length;
+
+  document.getElementById("questionNumber").textContent =
+    "QUESTÃO " + String(currentQuestion + 1).padStart(2, "0");
+
+  document.getElementById("questionText").textContent = q.question;
+
+  const badge = document.getElementById("levelBadge");
+  badge.textContent = q.level.toUpperCase();
+  badge.className = "pill";
+
+  if (q.level === "Fácil") badge.classList.add("level-easy");
+  if (q.level === "Média") badge.classList.add("level-medium");
+  if (q.level === "Difícil") badge.classList.add("level-hard");
+
+  document.getElementById("progressBar").style.width =
+    (currentQuestion / gameQuestions.length * 100) + "%";
+
+  const optionsArea = document.getElementById("options");
+  optionsArea.innerHTML = "";
+
+  q.options.forEach((option, index) => {
+    const button = document.createElement("button");
+    button.className = "option";
+    button.textContent = String.fromCharCode(65 + index) + ") " + option;
+    button.onclick = () => chooseAnswer(index);
+    optionsArea.appendChild(button);
+  });
+
+  const feedback = document.getElementById("feedback");
+  feedback.className = "feedback";
+  feedback.textContent = "";
+
+  document.getElementById("nextButton").classList.remove("show");
+
+  updateScores();
+}
+
+function chooseAnswer(index) {
+  if (answered) return;
+
+  answered = true;
+
+  const q = gameQuestions[currentQuestion];
+  const buttons = document.querySelectorAll(".option");
+  const feedback = document.getElementById("feedback");
+
+  buttons.forEach((button, i) => {
+    button.disabled = true;
+
+    if (i === q.answer) {
+      button.classList.add("correct");
+    }
+
+    if (i === index && index !== q.answer) {
+      button.classList.add("wrong");
+    }
+  });
+
+  if (index === q.answer) {
+    scores[currentTeam] += 10;
+    feedback.className = "feedback show good";
+    feedback.innerHTML =
+      "🎉 <strong>Resposta correta!</strong> +10 pontos para " +
+      escapeHTML(teams[currentTeam]) + ".<br><br>" + q.explanation;
+  } else {
+    feedback.className = "feedback show bad";
+    feedback.innerHTML =
+      "😅 <strong>Não foi dessa vez!</strong> A resposta correta era: <strong>" +
+      escapeHTML(q.options[q.answer]) + ".</strong><br><br>" + q.explanation;
+  }
+
+  updateScores();
+
+  const nextButton = document.getElementById("nextButton");
+  nextButton.textContent =
+    currentQuestion === gameQuestions.length - 1
+      ? "VER RESULTADO 🏆"
+      : "PRÓXIMA PERGUNTA →";
+
+  nextButton.classList.add("show");
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
+}
+
+function nextQuestion() {
+  if (!answered) return;
+
+  currentQuestion++;
+
+  if (currentQuestion >= gameQuestions.length) {
+    finishGame();
+    return;
+  }
+
+  currentTeam = currentTeam === 0 ? 1 : 0;
+  showQuestion();
+}
+
+function finishGame() {
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("finish").classList.remove("hidden");
+
+  document.getElementById("finalName0").textContent = teams[0];
+  document.getElementById("finalName1").textContent = teams[1];
+  document.getElementById("finalScore0").textContent = scores[0];
+  document.getElementById("finalScore1").textContent = scores[1];
+
+  const title = document.getElementById("resultTitle");
+  const text = document.getElementById("resultText");
+  const emoji = document.getElementById("resultEmoji");
+
+  if (scores[0] > scores[1]) {
+    title.textContent = "🏆 " + teams[0] + " venceu!";
+    text.textContent = "Parabéns! Vocês dominaram o Desafio Capivara!";
+    emoji.textContent = "🥇";
+  } else if (scores[1] > scores[0]) {
+    title.textContent = "🏆 " + teams[1] + " venceu!";
+    text.textContent = "Parabéns! Vocês dominaram o Desafio Capivara!";
+    emoji.textContent = "🥇";
+  } else {
+    title.textContent = "Empate!";
+    text.textContent = "As duas duplas tiveram o mesmo desempenho. Mandaram muito bem!";
+    emoji.textContent = "🤝";
+  }
+}
+
+function restartGame() {
+  document.getElementById("finish").classList.add("hidden");
+  document.getElementById("game").classList.add("hidden");
+  document.getElementById("setup").classList.remove("hidden");
+}
+</script>
+
+</body>
+</html>
